@@ -26,9 +26,7 @@ def _take_input_mock() -> str:
     str: A mock string representing the output of a routing table command.
     """
     input_from_user: str = """
-default via 192.168.100.1 dev enp52s0 proto dhcp src 192.168.100.35 metric 100
-172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1
-192.168.100.0/24 dev enp52s0 proto kernel scope link src 192.168.100.35 metric 100
+ceva
 """
     return input_from_user
 
@@ -63,7 +61,7 @@ def _extract_output(content_parsed: list, fsm_like: object) -> list:
         list: A list of dictionaries, each representing a routing entry.
     """
 
-    output: list = ["["]
+    output: list = []
     elements = fsm_like.header
 
     for row in content_parsed:
@@ -75,9 +73,39 @@ def _extract_output(content_parsed: list, fsm_like: object) -> list:
 
         output.append(result)
 
-    output.append("]")
-
     return output
+
+
+def _validate_output(output_elements: list) -> list:
+    """
+    Validates and formats the output elements for JSON-like representation.
+
+    This function checks if the output elements list is empty or if the first element lacks a 'gateway' key,
+    which are conditions indicating the input might not be from a valid Linux ip route command. If the validation
+    fails, it prints an error message and exits the program. Otherwise, it encloses the output elements in brackets
+    to mimic a JSON array format, enhancing readability and consistency for further processing or display.
+
+    Args:
+        output_elements (list): The list of dictionaries representing parsed routing information.
+
+    Returns:
+        list: The validated and formatted list of dictionaries, enclosed in brackets if valid.
+              Exits the program if the validation fails.
+
+    Raises:
+        SystemExit: If the input is not from a Linux ip route command or the list is empty.
+    """
+
+    error_message: str = "ERROR - Input given is not from linux ip route command"
+
+    if len(output_elements) == 0 or "gateway" not in output_elements[0].keys():
+        print(error_message)
+        exit(0)
+
+    output_elements.append("]")
+    output_elements.insert(0, "[")
+
+    return output_elements
 
 
 def _print_the_output(output: list) -> None:
@@ -100,7 +128,7 @@ def main():
 
     result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file, _take_input_mock())
     extracted_result = _extract_output(result_from_command_as_a_list_parsed, as_fsm)
-    _print_the_output(extracted_result)
+    _print_the_output(_validate_output(extracted_result))
 
 
 if __name__ == '__main__':
