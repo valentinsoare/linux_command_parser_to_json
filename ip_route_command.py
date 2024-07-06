@@ -30,29 +30,35 @@ def _parse_input(name_of_file_template: str, input_from_user: str) -> tuple:
 
 
 def _extract_output(content_parsed: list, fsm_like: object) -> list:
-    output: list = []
+    output: list = ["["]
+    elements = fsm_like.header
 
     for row in content_parsed:
         result: dict = {}
 
-        for i in range(len(fsm_like.header)):
+        for i in range(len(elements)):
             if row[i] != '':
-                result[fsm_like.header[i]] = row[i]
+                result[elements[i]] = row[i]
 
         output.append(result)
+
+    output.append("]")
 
     return output
 
 
 def _print_the_output(output: list) -> None:
-    for element in output:
-        print(element)
+    for i in range(len(output)):
+        if (i > 0) and (i < (len(output) - 2)):
+            print(output[i], end=",")
+        else:
+            print(output[i], end="")
 
 
-def main(input_value: str):
+def main():
     name_of_file: str = "parser_templates/ip_route.template"
 
-    result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file, _take_input())
+    result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file, _take_input_mock())
     extracted_result = _extract_output(result_from_command_as_a_list_parsed, as_fsm)
     _print_the_output(extracted_result)
 
