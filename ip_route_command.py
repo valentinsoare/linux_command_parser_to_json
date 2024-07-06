@@ -26,7 +26,9 @@ def _take_input_mock() -> str:
     str: A mock string representing the output of a routing table command.
     """
     input_from_user: str = """
-ceva
+default via 192.168.100.1 dev enp52s0 proto dhcp src 192.168.100.35 metric 100 
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 
+192.168.100.0/24 dev enp52s0 proto kernel scope link src 192.168.100.35 metric 100(
 """
     return input_from_user
 
@@ -120,7 +122,7 @@ def _print_the_output(output: list) -> None:
         print(item, end="," if 0 < i < len(output) - 2 else "")
 
 
-def main():
+def parse_and_transform():
     """
     Main function that orchestrates the parsing and printing of routing table information.
     """
@@ -132,4 +134,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parse_and_transform()
