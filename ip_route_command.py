@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import argparse
+import json
+
 import textfsm
 
 
@@ -78,7 +80,7 @@ def _extract_output(content_parsed: list, fsm_like: object) -> list:
     return output
 
 
-def _validate_output(output_elements: list) -> list:
+def _validate_output(output_elements: list, classic_printing: bool) -> list:
     """
     Validates and formats the output elements for JSON-like representation.
 
@@ -104,8 +106,9 @@ def _validate_output(output_elements: list) -> list:
         print(error_message)
         exit(0)
 
-    output_elements.append("]")
-    output_elements.insert(0, "[")
+    if classic_printing:
+        output_elements.append("]")
+        output_elements.insert(0, "[")
 
     return output_elements
 
@@ -122,6 +125,21 @@ def _print_the_output(output: list) -> None:
         print(item, end="," if 0 < i < len(output) - 2 else "")
 
 
+def _pretty_print_the_output(output: list) -> None:
+    """
+    Pretty prints the routing information as a formatted JSON string.
+
+    This method takes the list of dictionaries representing routing entries and uses the json.dumps() method
+    to convert it into a formatted JSON string. This enhances readability, making it easier to understand the
+    routing information structure. The 'indent' parameter in json.dumps() is set to 2, which specifies the number
+    of spaces to use for indentation.
+
+    Args:
+        output (list): The list of dictionaries representing routing entries.
+    """
+    print(json.dumps(output, indent=2))
+
+
 def parse_and_transform():
     """
     Main function that orchestrates the parsing and printing of routing table information.
@@ -130,7 +148,7 @@ def parse_and_transform():
 
     result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file, _take_input_mock())
     extracted_result = _extract_output(result_from_command_as_a_list_parsed, as_fsm)
-    _print_the_output(_validate_output(extracted_result))
+    _print_the_output(_validate_output(extracted_result, True))
 
 
 if __name__ == '__main__':
