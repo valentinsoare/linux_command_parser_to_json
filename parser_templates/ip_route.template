@@ -1,0 +1,11 @@
+Value Required dst (\S+)
+Value gateway (\S+)
+Value device (\S+)
+Value proto (\S+)
+Value scope (\S+)
+Value src (\S+)
+Value metric (\d+)
+
+Start
+  ^${dst}\s+via\s+${gateway}\s+dev\s+${device}(?:\s+proto\s+${proto})?(?:\s+scope\s+${scope})?(?:\s+src\s+${src})?(?:\s+metric\s+${metric})? -> Record
+  ^${dst}\s+dev\s+${device}(?:\s+proto\s+${proto})?(?:\s+scope\s+${scope})?(?:\s+src\s+${src})?(?:\s+metric\s+${metric})? -> Record
