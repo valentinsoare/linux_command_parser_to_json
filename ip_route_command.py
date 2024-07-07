@@ -107,18 +107,8 @@ def _validate_output(output_elements: list, classic_printing: bool) -> list:
     """
 
     error_message: str = "ERROR - Input given is not from linux ip route command"
-    it_exists = False
 
-    if len(output_elements) == 0:
-        print(error_message)
-        exit(0)
-
-    for i in range(len(output_elements)):
-        if "gateway" in output_elements[i].keys():
-            it_exists = True
-            break
-
-    if not it_exists:
+    if not output_elements or not any("gateway" in elem for elem in output_elements):
         print(error_message)
         exit(0)
 
