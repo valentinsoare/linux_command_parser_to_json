@@ -14,7 +14,7 @@ def _take_input_from_commandline() -> str:
         str: The routing table input provided by the user.
     """
     parser = argparse.ArgumentParser(description='Parse linux routing table output.')
-    parser.add_argument('input_string', type=str, help='Routing table input (ip route output) as a string.')
+    parser.add_argument('ip_route_output', type=str, help='Routing table input (ip route output) as a string.')
     args = parser.parse_args()
 
     return args.input_string
@@ -70,7 +70,6 @@ def _extract_output(content_parsed: list, fsm_like: object) -> list:
     Returns:
         list: A list of dictionaries, each representing a routing entry.
     """
-
     output: list = []
     elements = fsm_like.header
 
@@ -86,7 +85,7 @@ def _extract_output(content_parsed: list, fsm_like: object) -> list:
     return output
 
 
-def _validate_output(output_elements: list, classic_printing: bool) -> list:
+def _validate_output(output_elements: list) -> list:
     """
     Validates and formats the output elements for JSON-like representation.
 
@@ -112,38 +111,39 @@ def _validate_output(output_elements: list, classic_printing: bool) -> list:
         print(error_message)
         exit(0)
 
-    if classic_printing:
-        output_elements.append("]")
-        output_elements.insert(0, "[")
-
     return output_elements
 
 
-def _print_the_output(output: list) -> None:
+def generate_output(output: list, classic_printing=True) -> str:
     """
-    Prints the extracted routing information.
-    This method formats the output for readability before printing.
+    Generates a string representation of the output list.
+
+    This function either formats the output list as a JSON string or, if classic printing is enabled,
+    manually constructs a string representation that mimics a JSON array format by enclosing the list
+    in brackets and separating elements with commas. The classic printing mode is intended for scenarios
+    where JSON formatting is not preferred or applicable.
 
     Args:
-        output (list): The extracted routing information as a list of dictionaries.
+        output (list): The list of dictionaries representing parsed routing information.
+        classic_printing (bool, optional): Flag indicating whether to use classic printing instead of JSON. Defaults to True.
+
+    Returns:
+        str: The formatted string representation of the output.
     """
-    for i, item in enumerate(output):
-        print(item, end="," if 0 < i < len(output) - 2 else "")
+    if classic_printing:
+        output.append("]")
+        output.insert(0, "[")
+        final_output: list = []
 
+        for i, e in enumerate(output):
+            if 1 < i < len(output) - 1:
+                final_output.append(",")
 
-def _pretty_print_the_output(output: list) -> None:
-    """
-    Pretty prints the routing information as a formatted JSON string.
+            final_output.append(e)
 
-    This method takes the list of dictionaries representing routing entries and uses the json.dumps() method
-    to convert it into a formatted JSON string. This enhances readability, making it easier to understand the
-    routing information structure. The 'indent' parameter in json.dumps() is set to 2, which specifies the number
-    of spaces to use for indentation.
+        return "".join(str(j) for j in final_output)
 
-    Args:
-        output (list): The list of dictionaries representing routing entries.
-    """
-    print(json.dumps(output, indent=2))
+    return json.dumps(output, indent=2)
 
 
 def parse_and_transform():
@@ -152,9 +152,12 @@ def parse_and_transform():
     """
     name_of_file: str = "parser_templates/ip_route.template"
 
-    result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file, _take_input_mock())
+    result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file,
+                                                                _take_input_directly_from_iproute_command())
     extracted_result = _extract_output(result_from_command_as_a_list_parsed, as_fsm)
-    _print_the_output(_validate_output(extracted_result, True))
+    output_with_needed_structure: str = generate_output(_validate_output(extracted_result), False)
+
+    print(output_with_needed_structure)
 
 
 if __name__ == '__main__':
