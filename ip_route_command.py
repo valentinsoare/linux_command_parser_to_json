@@ -1,5 +1,14 @@
 #!/usr/bin/python3
 
+"""
+Author: Valentin Soare
+Work Email: valentin.soare@lseg.com
+Personal Email: soarevalentinn@gmail.com
+
+Parsing and printing of output from "ip route" command from RHEL doesn't matter the version, in JSON format.
+We can have classic printing or pretty printing with the appropriate number of spaces characterized by specific format.
+"""
+
 import argparse
 import json
 import os
@@ -155,7 +164,7 @@ def parse_and_transform():
     result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file,
                                                                 _take_input_directly_from_iproute_command())
     extracted_result = _extract_output(result_from_command_as_a_list_parsed, as_fsm)
-    output_with_needed_structure: str = generate_output(_validate_output(extracted_result), False)
+    output_with_needed_structure: str = generate_output(_validate_output(extracted_result), True)
 
     print(output_with_needed_structure)
 
