@@ -2,11 +2,12 @@
 
 import argparse
 import json
+import os
 
 import textfsm
 
 
-def _take_input() -> str:
+def _take_input_from_commandline() -> str:
     """
     Parses command line arguments to get the routing table input as a string.
     Returns:
@@ -28,11 +29,16 @@ def _take_input_mock() -> str:
     str: A mock string representing the output of a routing table command.
     """
     input_from_user: str = """
-default via 192.168.100.1 dev enp52s0 proto dhcp src 192.168.100.35 metric 100 
-172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 
-192.168.100.0/24 dev enp52s0 proto kernel scope link src 192.168.100.35 metric 100(
+192.168.1.0/24 dev eth0  proto kernel  scope link  src 192.168.1.10
+192.168.2.0/24 dev eth1  proto kernel  scope link  src 192.168.2.10
+10.0.0.0/8 via 192.168.1.1 dev eth0
+default via 192.168.1.1 dev eth0
 """
     return input_from_user
+
+
+def _take_input_directly_from_iproute_command() -> str:
+    return os.popen('ip route').read()
 
 
 def _parse_input(name_of_file_template: str, input_from_user: str) -> tuple:
@@ -101,8 +107,18 @@ def _validate_output(output_elements: list, classic_printing: bool) -> list:
     """
 
     error_message: str = "ERROR - Input given is not from linux ip route command"
+    it_exists = False
 
-    if len(output_elements) == 0 or "gateway" not in output_elements[0].keys():
+    if len(output_elements) == 0:
+        print(error_message)
+        exit(0)
+
+    for i in range(len(output_elements)):
+        if "gateway" in output_elements[i].keys():
+            it_exists = True
+            break
+
+    if not it_exists:
         print(error_message)
         exit(0)
 
