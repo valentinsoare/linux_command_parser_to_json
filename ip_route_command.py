@@ -165,7 +165,7 @@ def parse_and_transform() -> None:
     result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file,
                                                                 _take_input_directly_from_iproute_command())
     extracted_result = _extract_output(result_from_command_as_a_list_parsed, as_fsm)
-    output_with_needed_structure: str = generate_output(_validate_output(extracted_result), True)
+    output_with_needed_structure: str = generate_output(_validate_output(extracted_result), classic_printing=True)
 
     print(output_with_needed_structure)
 
