@@ -7,7 +7,7 @@
 # See the LICENSE file in the root directory for details.
 # The use of this script by the London Stock Exchange does not confer
 # any ownership rights to the employer.
-#                                                                                            
+#
 # Author: Valentin Soare
 
 import argparse
@@ -124,7 +124,7 @@ def _validate_output(output_elements: list) -> list:
     return output_elements
 
 
-def generate_output(output: list, classic_printing=True) -> str:
+def generate_output(output: list, classic_style=True) -> str:
     """
     Generates a string representation of the output list.
 
@@ -135,19 +135,17 @@ def generate_output(output: list, classic_printing=True) -> str:
 
     Args:
         output (list): The list of dictionaries representing parsed routing information.
-        classic_printing (bool, optional): Flag indicating whether to use classic printing instead of JSON. Defaults to True.
+        classic_style (bool, optional): Flag indicating whether to use classic printing instead of JSON. Defaults to True.
 
     Returns:
         str: The formatted string representation of the output.
     """
-    if classic_printing:
-        output.append("]")
-        output.insert(0, "[")
+    if classic_style:
         final_output: list = []
 
         for i, e in enumerate(output):
-            if 1 < i < len(output) - 1:
-                final_output.append(",")
+            if 0 < i < len(output):
+                final_output.append("\n")
 
             final_output.append(e)
 
@@ -165,7 +163,7 @@ def parse_and_transform() -> None:
     result_from_command_as_a_list_parsed, as_fsm = _parse_input(name_of_file,
                                                                 _take_input_directly_from_iproute_command())
     extracted_result = _extract_output(result_from_command_as_a_list_parsed, as_fsm)
-    output_with_needed_structure: str = generate_output(_validate_output(extracted_result), classic_printing=True)
+    output_with_needed_structure: str = generate_output(_validate_output(extracted_result), classic_style=True)
 
     print(output_with_needed_structure)
 
