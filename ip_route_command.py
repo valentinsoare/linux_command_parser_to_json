@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 
-"""
-Author: Valentin Soare
-Work Email: valentin.soare@lseg.com
-Personal Email: soarevalentinn@gmail.com
-
-Parsing and printing of output from "ip route" command from RHEL doesn't matter the version, in JSON format.
-We can have classic printing or pretty printing with the appropriate number of spaces characterized by specific format.
-"""
+# -*- coding: utf-8 -*-
+#
+# This script along with its template called ip_route.template from parser_templates are owned by Valentin Soare.
+# Licensed under the GNU General Public License, version 3 (GPL-3.0).import json.
+# See the LICENSE file in the root directory for details.
+# The use of this script by the London Stock Exchange does not confer
+# any ownership rights to the employer.
+#                                                                                            
+# Author: Valentin Soare
 
 import argparse
 import json

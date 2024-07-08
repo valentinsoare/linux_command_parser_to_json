@@ -1,14 +1,15 @@
 import ip_route_command
 
-input_value = """
-default via 192.168.100.1 dev enp52s0 proto dhcp src 192.168.100.35 metric 100 
-172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 
-192.168.100.0/24 dev enp52s0 proto kernel scope link src 192.168.100.35 metric 100
+"""
+Right now I'm writing modules made for each linux command that we need its output to JSON. 
+hen several commands will be available as JSON, then the main logic of the app will be created.
+
+More to come....
 """
 
 
 def print_hi():
-    ip_route_command.main(input_value)
+    ip_route_command.main()
 
 
 if __name__ == '__main__':
