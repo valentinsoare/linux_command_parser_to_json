@@ -155,7 +155,7 @@ def generate_output(output: list, classic_printing=True) -> str:
     return json.dumps(output, indent=2)
 
 
-def parse_and_transform():
+def parse_and_transform() -> None:
     """
     Main function that orchestrates the parsing and printing of routing table information.
     """
